@@ -1,0 +1,8 @@
+# pull-request.yml
+
+name: pull-request
+on: pull_request
+jobs:
+  pull-request:
+    uses: dangernoodle-io/dangernoodle-io-repos/.github/workflows/dn-maven-pull-request.yml@main
+    secrets: inherit
