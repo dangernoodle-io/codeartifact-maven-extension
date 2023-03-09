@@ -1,5 +1,8 @@
 # codeartifact-maven-wagon
 
+[![pull-request](https://github.com/dangernoodle-io/codeartifact-maven-wagon/actions/workflows/pull-request.yml/badge.svg)](https://github.com/dangernoodle-io/codeartifact-maven-wagon/actions/workflows/pull-request.yml)
+[![coverage](https://coveralls.io/repos/github/dangernoodle-io/codeartifact-maven-wagon/badge.svg)](https://coveralls.io/github/dangernoodle-io/codeartifact-maven-wagon)
+
 Maven `http` wagon implementation for [AWS CodeArtifact](https://aws.amazon.com/codeartifact/) that automatically
 retrieves the authorization token before uploading/downloading artifacts. Java 8 or greater is required.
 
@@ -46,8 +49,10 @@ Replace `https` with `codeartifact` in your `repositories` and `distributionMang
 
 ### Credentials
 
-In addtion to the use of the `DefaultCredentialsProvider` to obtain the proper aws credentials from the environment, 
-static credentials can be provided in an a `server` entry in `maven-settings.xml`
+The wagon automatically uses the [DefaultCredentialsProvider](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/DefaultCredentialsProvider.html)
+to find AWS credentials. Be sure you have  configured your environment accordingly.
+
+Separately,static credentials can be provided in an a `server` entry in `maven-settings.xml`
 
 ```xml
   <servers>
