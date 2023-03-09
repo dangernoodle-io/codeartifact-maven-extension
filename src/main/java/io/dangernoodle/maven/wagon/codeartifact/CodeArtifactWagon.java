@@ -11,7 +11,6 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.codeartifact.CodeartifactClient;
-import software.amazon.awssdk.services.codeartifact.CodeartifactClientBuilder;
 import software.amazon.awssdk.services.codeartifact.model.GetAuthorizationTokenRequest;
 
 import java.util.Optional;
@@ -23,7 +22,8 @@ import java.util.Optional;
  */
 public class CodeArtifactWagon extends AbstractHttpClientWagon
 {
-    private AuthenticationInfo awsAuthInfo;
+    // visble for testing
+    AuthenticationInfo awsAuthInfo;
 
     @Override
     public void connect(Repository repository, AuthenticationInfo authenticationInfo, ProxyInfoProvider proxyInfoProvider)
@@ -40,33 +40,45 @@ public class CodeArtifactWagon extends AbstractHttpClientWagon
     }
 
     // visible for testing
-    void configureRequest(String domainOwner, GetAuthorizationTokenRequest.Builder builder)
+    CodeartifactClient createCodeArtifactClient(String region, AuthenticationInfo auth)
     {
-        String[] parts = domainOwner.split("-");
-        builder.domain(parts[0]).domainOwner(parts[1]);
-    }
-
-    // visible for testing
-    CodeartifactClientBuilder createBuilder()
-    {
-        return CodeartifactClient.builder();
+        return CodeartifactClient.builder()
+                                 .credentialsProvider(createCredentialsProvider(auth))
+                                 .region(Region.of(region))
+                                 .build();
     }
 
     // visible for testing
     AwsCredentialsProvider createCredentialsProvider(AuthenticationInfo authenticationInfo)
     {
         return Optional.ofNullable(authenticationInfo)
-                       .filter(auth -> auth.getUserName() != null && auth.getPassword() != null)
+                       .filter(auth -> !(auth.getUserName() == null || auth.getPassword() == null))
                        .map(this::createStaticCredentialsProvider)
                        .orElse(null);
+    }
+
+    // visble for testing
+    GetAuthorizationTokenRequest createRequest(String domainOwner)
+    {
+        String[] parts = domainOwner.split("-");
+        return GetAuthorizationTokenRequest.builder()
+                                           .domain(parts[0])
+                                           .domainOwner(parts[1])
+                                           .build();
+    }
+
+    // visble for testing
+    String getAuthorizationToken(CodeartifactClient client, String[] host)
+    {
+        return client.getAuthorizationToken(createRequest(host[0]))
+                     .authorizationToken();
     }
 
     private AuthenticationInfo createCodeArtifactAuthentication(String[] host, AuthenticationInfo auth)
     {
         try (CodeartifactClient client = createCodeArtifactClient(host[3], auth))
         {
-            String token = client.getAuthorizationToken(builder -> configureRequest(host[0], builder))
-                                 .authorizationToken();
+            String token = getAuthorizationToken(client, host);
 
             AuthenticationInfo codeArtifact = new AuthenticationInfo();
             codeArtifact.setUserName("aws");
@@ -74,14 +86,6 @@ public class CodeArtifactWagon extends AbstractHttpClientWagon
 
             return codeArtifact;
         }
-    }
-
-    private CodeartifactClient createCodeArtifactClient(String region, AuthenticationInfo auth)
-    {
-        return createBuilder()
-                .credentialsProvider(createCredentialsProvider(auth))
-                .region(Region.of(region))
-                .build();
     }
 
     private AwsCredentialsProvider createStaticCredentialsProvider(AuthenticationInfo auth)
