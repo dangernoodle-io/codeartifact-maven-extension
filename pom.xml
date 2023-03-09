@@ -10,7 +10,7 @@
 
   <artifactId>codeartifact-maven-wagon</artifactId>
   <name>${project.artifactId}</name>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
 
   <url>https://github.com/dangernoodle-io/codeartifact-maven-wagon</url>
   <description>maven wagon for accessing aws codeartifact</description>
@@ -102,6 +102,7 @@
     <connection>scm:git:git@github.com:dangernoodle-io/codeartifact-maven-wagon</connection>
     <developerConnection>scm:git:git@github.com:dangernoodle-io/codeartifact-maven-wagon</developerConnection>
     <url>${project.url}</url>
+    <tag>codeartifact-maven-wagon-0.1.0</tag>
   </scm>
 
   <issueManagement>
