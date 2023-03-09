@@ -17,10 +17,15 @@ import software.amazon.awssdk.services.codeartifact.model.GetAuthorizationTokenR
 import java.util.Optional;
 
 
+/**
+ * Maven <code>http</code> wagon implementation that handles authentication against <code>CodeArtifact</code>
+ * prior to upload/download of artifacts.
+ */
 public class CodeArtifactWagon extends AbstractHttpClientWagon
 {
     private AuthenticationInfo awsAuthInfo;
 
+    @Override
     public void connect(Repository repository, AuthenticationInfo authenticationInfo, ProxyInfoProvider proxyInfoProvider)
             throws ConnectionException, AuthenticationException
     {
@@ -47,6 +52,15 @@ public class CodeArtifactWagon extends AbstractHttpClientWagon
         return CodeartifactClient.builder();
     }
 
+    // visible for testing
+    AwsCredentialsProvider createCredentialsProvider(AuthenticationInfo authenticationInfo)
+    {
+        return Optional.ofNullable(authenticationInfo)
+                       .filter(auth -> auth.getUserName() != null && auth.getPassword() != null)
+                       .map(this::createStaticCredentialsProvider)
+                       .orElse(null);
+    }
+
     private AuthenticationInfo createCodeArtifactAuthentication(String[] host, AuthenticationInfo auth)
     {
         try (CodeartifactClient client = createCodeArtifactClient(host[3], auth))
@@ -68,15 +82,6 @@ public class CodeArtifactWagon extends AbstractHttpClientWagon
                 .credentialsProvider(createCredentialsProvider(auth))
                 .region(Region.of(region))
                 .build();
-    }
-
-    // visible for testing
-    AwsCredentialsProvider createCredentialsProvider(AuthenticationInfo authenticationInfo)
-    {
-        return Optional.ofNullable(authenticationInfo)
-                       .filter(auth -> auth.getUserName() != null && auth.getPassword() != null)
-                       .map(this::createStaticCredentialsProvider)
-                       .orElse(null);
     }
 
     private AwsCredentialsProvider createStaticCredentialsProvider(AuthenticationInfo auth)
