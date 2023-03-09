@@ -1,0 +1,11 @@
+.DS_Store
+.classpath
+.idea
+.project
+.settings
+target
+.*.md.html
+
+pom.xml.releaseBackup
+release.properties
+
