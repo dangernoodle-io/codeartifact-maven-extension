@@ -2,8 +2,14 @@
   <components>
     <component>
       <role>org.apache.maven.wagon.Wagon</role>
-      <role-hint>codeartifact</role-hint>
-      <implementation>io.dangernoodle.maven.wagon.codeartifact.CodeArtifactWagon</implementation>
+      <role-hint>http</role-hint>
+      <implementation>io.dangernoodle.codeartifact.maven.wagon.CodeArtifactWagon</implementation>
+      <instantiation-strategy>per-lookup</instantiation-strategy>
+    </component>
+    <component>
+      <role>org.apache.maven.wagon.Wagon</role>
+      <role-hint>https</role-hint>
+      <implementation>io.dangernoodle.codeartifact.maven.wagon.CodeArtifactWagon</implementation>
       <instantiation-strategy>per-lookup</instantiation-strategy>
     </component>
   </components>

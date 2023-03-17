@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -8,26 +9,31 @@
     <version>14</version>
   </parent>
 
-  <artifactId>codeartifact-maven-wagon</artifactId>
+  <artifactId>codeartifact-maven-extension</artifactId>
   <name>${project.artifactId}</name>
-  <version>0.1.2-SNAPSHOT</version>
+  <version>0.2.0-SNAPSHOT</version>
 
-  <url>https://github.com/dangernoodle-io/codeartifact-maven-wagon</url>
-  <description>maven wagon for accessing aws codeartifact</description>
+  <url>https://github.com/dangernoodle-io/codeartifact-maven-extension</url>
+  <description>codeartifact authentication prior to downloads/uploads</description>
 
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
 
     <aws-java-sdk.version>2.20.17</aws-java-sdk.version>
+    <httpclient.version>4.5.13</httpclient.version>
+    <javax-inject.version>1</javax-inject.version>
     <junit.version>5.9.2</junit.version>
     <mockito.version>3.2.4</mockito.version>
     <slf4j.version>1.7.36</slf4j.version>
 
+    <!-- plugins -->
+    <maven-resolver-http.version>1.9.7</maven-resolver-http.version>
     <maven-wagon-http.version>3.5.3</maven-wagon-http.version>
+    <sisu-maven-plugin.version>0.3.5</sisu-maven-plugin.version>
   </properties>
 
   <build>
-    <!-- these only enable when the associated profiles do -->
+    <!-- these only enable alongside the associated profiles  -->
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -44,6 +50,20 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.sisu</groupId>
+        <artifactId>sisu-maven-plugin</artifactId>
+        <version>${sisu-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>generate-index</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>main-index</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
@@ -72,6 +92,11 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-transport-http</artifactId>
+      <version>${maven-resolver-http.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-http</artifactId>
       <version>${maven-wagon-http.version}</version>
@@ -83,7 +108,7 @@
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
+      <artifactId>mockito-junit-jupiter</artifactId>
       <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
@@ -93,6 +118,12 @@
       <version>${slf4j.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>${javax-inject.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>
@@ -100,7 +131,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
-        <version>4.5.13</version>
+        <version>${httpclient.version}</version>
       </dependency>
       <dependency>
         <groupId>org.junit</groupId>
@@ -120,14 +151,14 @@
   </dependencyManagement>
 
   <scm>
-    <connection>scm:git:git@github.com:dangernoodle-io/codeartifact-maven-wagon</connection>
-    <developerConnection>scm:git:git@github.com:dangernoodle-io/codeartifact-maven-wagon</developerConnection>
+    <connection>scm:git:git@github.com:dangernoodle-io/codeartifact-maven-extension</connection>
+    <developerConnection>scm:git:git@github.com:dangernoodle-io/codeartifact-maven-extension</developerConnection>
     <url>${project.url}</url>
     <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
     <system>GitHub</system>
-    <url>https://github.com/dangernoodle-io/codeartifact-maven-wagon/issues</url>
+    <url>https://github.com/dangernoodle-io/codeartifact-maven-extension/issues</url>
   </issueManagement>
 </project>
