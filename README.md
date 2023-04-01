@@ -13,7 +13,23 @@ version. See [here](https://maven.apache.org/guides/mini/guide-resolver-transpor
 
 ## Usage
 
-Add the following to the build section of your project's pom:
+The easiest way to configure the plugin is to add an entry to the `.mvn/extensions.xml` file (see [here](https://maven.apache.org/configure.html)
+for more details) like so:
+
+```xml
+<extensions xmlns="http://maven.apache.org/EXTENSIONS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/EXTENSIONS/1.0.0 http://maven.apache.org/xsd/core-extensions-1.0.0.xsd">
+  <extension>
+     <groupId>io.dangernoodle</groupId>
+     <artifactId>codeartifact-maven-extension</artifactId>
+     <version>${codeartifact-maven-extension.version}</version>
+  </extension>
+</extensions>
+```
+
+This is the recommended approach if you use a parent pom that is also stored within `codeartifact`. If you have a
+standalone project and don't wish to use the `.mvn` directory, you can add the following to the build section of 
+your project's pom:
 
 ```xml
 

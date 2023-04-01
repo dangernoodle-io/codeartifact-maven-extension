@@ -1,11 +1,9 @@
-.DS_Store
-.classpath
-.idea
 .project
 .settings
+.README.md.html
 target
-.*.md.html
-
+.DS_Store
+.idea
 pom.xml.releaseBackup
 release.properties
 
