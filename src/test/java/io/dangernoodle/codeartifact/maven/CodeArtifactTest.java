@@ -34,7 +34,7 @@ public class CodeArtifactTest
 
     public static final String USERNAME = "AWS_ACCESS_KEY_ID";
 
-    private static final String HOST = "domain-account.d.codeartifact.region.amazonaws.com";
+    private static final String HOST = "domain-with-hyphens-account.d.codeartifact.region.amazonaws.com";
 
     private CodeArtifact.Credentials credentials;
 
@@ -231,7 +231,7 @@ public class CodeArtifactTest
         verify(mockClient).getAuthorizationToken(requestCaptor.capture());
         verify(mockClient).close();
 
-        assertEquals("domain", requestCaptor.getValue().domain());
+        assertEquals("domain-with-hyphens", requestCaptor.getValue().domain());
         assertEquals("account", requestCaptor.getValue().domainOwner());
     }
 

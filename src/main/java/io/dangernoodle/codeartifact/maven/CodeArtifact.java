@@ -12,6 +12,8 @@ import software.amazon.awssdk.services.codeartifact.model.GetAuthorizationTokenR
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -20,6 +22,8 @@ import java.util.Optional;
 public class CodeArtifact
 {
     private static final String KEY = "codeartifact.maven.token.duration";
+
+    private static final Pattern DOMAIN_AND_DOMAIN_OWNER_PATTERN = Pattern.compile("(.*)-(.*)");
 
     private CodeArtifact.Credentials cached;
 
@@ -60,10 +64,12 @@ public class CodeArtifact
 
     private GetAuthorizationTokenRequest createTokenRequest(String domainOwner)
     {
-        String[] parts = domainOwner.split("-");
+        Matcher matcher = DOMAIN_AND_DOMAIN_OWNER_PATTERN.matcher(domainOwner);
+        matcher.matches();
+
         return GetAuthorizationTokenRequest.builder()
-                                           .domain(parts[0])
-                                           .domainOwner(parts[1])
+                                           .domain(matcher.group(1))
+                                           .domainOwner(matcher.group(2))
                                            .durationSeconds(getTokenDuration())
                                            .build();
     }
