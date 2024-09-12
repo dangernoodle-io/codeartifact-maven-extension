@@ -1,7 +1,8 @@
 # codeartifact-maven-extension
 
 ![maven](https://img.shields.io/maven-central/v/io.dangernoodle/codeartifact-maven-extension)
-![pull-request](https://github.com/dangernoodle-io/codeartifact-maven-extension/actions/workflows/pull-request.yml/badge.svg)
+[![maven-build](https://github.com/dangernoodle-io/codeartifact-maven-extension/actions/workflows/maven-build.yml/badge.svg)](https://github.com/dangernoodle-io/codeartifact-maven-extension/actions/workflows/maven-build.yml)
+[![maven-release](https://github.com/dangernoodle-io/codeartifact-maven-extension/actions/workflows/maven-release.yml/badge.svg)](https://github.com/dangernoodle-io/codeartifact-maven-extension/actions/workflows/maven-release.yml)
 ![coverage](https://coveralls.io/repos/github/dangernoodle-io/codeartifact-maven-extension/badge.svg?branch=main)
 
 Maven `build` extension that provides a [resolver](https://maven.apache.org/resolver/index.html) and 
