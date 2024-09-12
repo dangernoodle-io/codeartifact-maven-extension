@@ -1,0 +1,15 @@
+name: maven-build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-main:
+    secrets: inherit
+    uses: dangernoodle-io/.github/.github/workflows/maven.yml@main
+    with:
+      maven-goals: verify
