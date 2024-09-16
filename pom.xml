@@ -5,7 +5,7 @@
   <parent>
     <groupId>io.dangernoodle</groupId>
     <artifactId>dangernoodle-io-build-pom</artifactId>
-    <version>14</version>
+    <version>14.1.1</version>
   </parent>
 
   <artifactId>codeartifact-maven-extension</artifactId>
@@ -21,7 +21,7 @@
     <aws-java-sdk.version>2.20.17</aws-java-sdk.version>
     <httpclient.version>4.5.13</httpclient.version>
     <javax-inject.version>1</javax-inject.version>
-    <junit.version>5.9.2</junit.version>
+    <junit.version>5.11.0</junit.version>
     <mockito.version>3.2.4</mockito.version>
     <slf4j.version>1.7.36</slf4j.version>
 
@@ -69,7 +69,7 @@
         <artifactId>jacoco-maven-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>org.eluder.coveralls</groupId>
+        <groupId>com.github.hazendaz.maven</groupId>
         <artifactId>coveralls-maven-plugin</artifactId>
       </plugin>
     </plugins>
