@@ -5,7 +5,7 @@
   <parent>
     <groupId>io.dangernoodle</groupId>
     <artifactId>dangernoodle-io-build-pom</artifactId>
-    <version>14.1.1</version>
+    <version>14.1.2</version>
   </parent>
 
   <artifactId>codeartifact-maven-extension</artifactId>

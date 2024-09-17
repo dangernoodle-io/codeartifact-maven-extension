@@ -12,7 +12,8 @@ import software.amazon.awssdk.services.codeartifact.model.GetAuthorizationTokenR
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Delegate class responsible for interfacing with <code>CodeArtifact</code>.
@@ -20,6 +21,8 @@ import java.util.Optional;
 public class CodeArtifact
 {
     private static final String KEY = "codeartifact.maven.token.duration";
+
+    private static final Pattern DOMAIN_AND_DOMAIN_OWNER_PATTERN = Pattern.compile("(.*)-(.*)");
 
     private CodeArtifact.Credentials cached;
 
@@ -42,8 +45,8 @@ public class CodeArtifact
     CodeartifactClient createClient(String region, Credentials credentials, CodeartifactClientBuilder builder)
     {
         return builder.credentialsProvider(createProvider(credentials))
-                      .region(Region.of(region))
-                      .build();
+                .region(Region.of(region))
+                .build();
     }
 
     private AwsCredentialsProvider createProvider(Credentials credentials)
@@ -58,14 +61,17 @@ public class CodeArtifact
         return StaticCredentialsProvider.create(AwsBasicCredentials.create(credentials.username, credentials.password));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private GetAuthorizationTokenRequest createTokenRequest(String domainOwner)
     {
-        String[] parts = domainOwner.split("-");
+        Matcher matcher = DOMAIN_AND_DOMAIN_OWNER_PATTERN.matcher(domainOwner);
+        matcher.matches();
+
         return GetAuthorizationTokenRequest.builder()
-                                           .domain(parts[0])
-                                           .domainOwner(parts[1])
-                                           .durationSeconds(getTokenDuration())
-                                           .build();
+                .domain(matcher.group(1))
+                .domainOwner(matcher.group(2))
+                .durationSeconds(getTokenDuration())
+                .build();
     }
 
     private Credentials generateCredentials(String host, Credentials credentials)
@@ -85,15 +91,15 @@ public class CodeArtifact
     private long getTokenDuration()
     {
         return Duration.ofMinutes(Long.parseLong(System.getProperty(KEY, "15")))
-                       .getSeconds();
+                .getSeconds();
     }
 
     private boolean hasExpired(Instant instant)
     {
         return Optional.ofNullable(instant)
-                       .filter(Instant.now()::isAfter)
-                       .map(i -> true)
-                       .isPresent();
+                .filter(Instant.now()::isAfter)
+                .map(i -> true)
+                .isPresent();
     }
 
     public static class Credentials
