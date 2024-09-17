@@ -36,6 +36,8 @@ public class CodeArtifactTest
 
     private static final String HOST = "domain-account.d.codeartifact.region.amazonaws.com";
 
+    private static final String HOST_WITH_HYPHENS = "domain-with-hyphens-account.d.codeartifact.region.amazonaws.com";
+
     private CodeArtifact.Credentials credentials;
 
     private CodeArtifact delegate;
@@ -84,6 +86,10 @@ public class CodeArtifactTest
         whenIsCodeArtifactUrl();
         thenUrlIsCodeArtifact();
 
+        givenACodeArtifactUrlWithHyphens();
+        whenIsCodeArtifactUrl();
+        thenUrlIsCodeArtifact();
+
         givenNotACodeArtifactUrl();
         whenIsCodeArtifactUrl();
         thenUrlIsNotCodeArtifact();
@@ -96,6 +102,10 @@ public class CodeArtifactTest
         givenANonExpiredToken();
         givenATokenResponse();
         whenCreateCredentials();
+        thenTokenRequestIsCorrect();
+        thenCredentialsAreCreated();
+
+        whenCreateCredentialsHyphen();
         thenTokenRequestIsCorrect();
         thenCredentialsAreCreated();
 
@@ -147,7 +157,12 @@ public class CodeArtifactTest
 
     private void givenACodeArtifactUrl()
     {
-        url = "https://domain-account.d.codeartifact.region.amazonaws.com/maven/repository";
+        url = HOST + "/maven/repository";
+    }
+
+    private void givenACodeArtifactUrlWithHyphens()
+    {
+        url = HOST_WITH_HYPHENS + "/maven/repository";
     }
 
     private void givenANonExpiredToken()
@@ -257,6 +272,11 @@ public class CodeArtifactTest
     private void whenCreateCredentials()
     {
         credentials = delegate.createCredentials(HOST, mockCredentials);
+    }
+
+    private void whenCreateCredentialsHyphen()
+    {
+        credentials = delegate.createCredentials(HOST_WITH_HYPHENS, mockCredentials);
     }
 
     private void whenIsCodeArtifactUrl()
