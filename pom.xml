@@ -1,4 +1,4 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -10,7 +10,7 @@
 
   <artifactId>codeartifact-maven-extension</artifactId>
   <name>${project.artifactId}</name>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>0.3.0</version>
 
   <url>https://github.com/dangernoodle-io/codeartifact-maven-extension</url>
   <description>codeartifact authentication prior to downloads/uploads</description>
@@ -163,7 +163,7 @@
     <connection>scm:git:git@github.com:dangernoodle-io/codeartifact-maven-extension</connection>
     <developerConnection>scm:git:git@github.com:dangernoodle-io/codeartifact-maven-extension</developerConnection>
     <url>${project.url}</url>
-    <tag>HEAD</tag>
+    <tag>0.3.0</tag>
   </scm>
 
   <issueManagement>
