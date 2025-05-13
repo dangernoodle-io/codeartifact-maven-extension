@@ -9,7 +9,7 @@ Maven `build` extension that provides a [resolver](https://maven.apache.org/reso
 [wagon](https://maven.apache.org/wagon/index.html) implementation capable of authenticating against 
 [AWS CodeArtifact](https://aws.amazon.com/codeartifact/) before uploading/downloading artifacts.
 
-Java 8 or greater is required. The appropriate implementation will automatically be selected be based upon your maven
+Java 8 or greater is required. The appropriate implementation will automatically be selected based upon your maven
 version. See [here](https://maven.apache.org/guides/mini/guide-resolver-transport.html) for additional details.
 
 ## Usage
@@ -48,9 +48,8 @@ your project's pom:
 
 ### Credentials
 
-The wagon automatically uses
-the [DefaultCredentialsProvider](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/DefaultCredentialsProvider.html)
-to find AWS credentials. Be sure you have configured your environment accordingly.
+The wagon automatically uses the [DefaultCredentialsProvider](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/DefaultCredentialsProvider.html) to find AWS credentials. Be sure you have 
+configured your environment accordingly.
 
 Separately, static credentials can be provided in an a `server` entry in `maven-settings.xml`
 
