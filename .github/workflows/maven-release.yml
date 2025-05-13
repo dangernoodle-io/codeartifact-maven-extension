@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  release-main:
+  release:
     secrets: inherit
     uses: dangernoodle-io/.github/.github/workflows/maven.yml@main
     with:
