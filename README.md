@@ -48,7 +48,7 @@ your project's pom:
 
 ### Credentials
 
-The wagon automatically uses the [DefaultCredentialsProvider](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/DefaultCredentialsProvider.html) to find AWS credentials. Be sure you have 
+The extension automatically uses the [DefaultCredentialsProvider](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/DefaultCredentialsProvider.html) to find AWS credentials. Be sure you have 
 configured your environment accordingly.
 
 Separately, static credentials can be provided in an a `server` entry in `maven-settings.xml`
