@@ -11,7 +11,6 @@ import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 
 import javax.inject.Named;
-import java.util.Optional;
 
 
 /**
@@ -67,6 +66,15 @@ public class CodeArtifactTransportFactory implements TransporterFactory
         return new HttpTransporterFactory();
     }
 
+    private String getAwsProfile() 
+    {
+        final String profile = System.getProperty(CodeArtifact.AWS_PROFILE_PROPERTY_NAME);
+        if (profile != null) {
+            return profile;
+        }
+        return System.getenv(CodeArtifact.AWS_PROFILE_ENV_VARIABLE_NAME);
+    }
+
     private boolean areKeysSet(AuthenticationContext context)
     {
         return toUsername(context) != null && toPassword(context) != null;
@@ -89,15 +97,16 @@ public class CodeArtifactTransportFactory implements TransporterFactory
 
     private CodeArtifact.Credentials createCredentials(AuthenticationContext context)
     {
-        return Optional.ofNullable(context)
-                       .filter(this::areKeysSet)
-                       .map(this::toCredentials)
-                       .orElse(CodeArtifact.Credentials.EMPTY);
-    }
-
-    private CodeArtifact.Credentials toCredentials(AuthenticationContext context)
-    {
-        return new CodeArtifact.Credentials(toUsername(context), toPassword(context));
+        if (context != null && areKeysSet(context)) 
+        {
+            return new CodeArtifact.Credentials(toUsername(context), toPassword(context));
+        }
+        final String awsProfile = getAwsProfile();
+        if (awsProfile != null)
+        {
+            return new CodeArtifact.Credentials(awsProfile);
+        }
+        return CodeArtifact.Credentials.EMPTY;
     }
 
     private String toPassword(AuthenticationContext context)

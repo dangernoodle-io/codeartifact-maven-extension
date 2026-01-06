@@ -17,6 +17,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.codeartifact.CodeartifactClient;
 import software.amazon.awssdk.services.codeartifact.CodeartifactClientBuilder;
@@ -33,6 +34,8 @@ public class CodeArtifactTest
     public static final String PASSWORD = "AWS_SECRET_ACCESS_KEY";
 
     public static final String USERNAME = "AWS_ACCESS_KEY_ID";
+
+    public static final String AWS_PROFILE = "code-artifact";
 
     private static final String HOST = "domain-account.d.codeartifact.region.amazonaws.com";
 
@@ -155,6 +158,15 @@ public class CodeArtifactTest
         thenStaticProviderUsed();
     }
 
+    @Test
+    public void testProfileCredentials()
+    {
+        givenAProfile();
+        whenCreateClient();
+        thenRegionIsConfigured();
+        thenProfileProviderUsed();
+    }
+
     private void givenACodeArtifactUrl()
     {
         url = HOST + "/maven/repository";
@@ -210,6 +222,11 @@ public class CodeArtifactTest
         mockCredentials = new CodeArtifact.Credentials(USERNAME, PASSWORD);
     }
 
+    private void givenAProfile()
+    {
+        mockCredentials = new CodeArtifact.Credentials(AWS_PROFILE);
+    }
+
     private void thenCachedCredentialsUsed()
     {
         verifyNoMoreInteractions(mockClient);
@@ -239,6 +256,11 @@ public class CodeArtifactTest
 
         assertEquals(USERNAME, providerCaptor.getValue().resolveCredentials().accessKeyId());
         assertEquals(PASSWORD, providerCaptor.getValue().resolveCredentials().secretAccessKey());
+    }
+
+    private void thenProfileProviderUsed()
+    {
+        verify(mockClientBuilder).credentialsProvider(any(ProfileCredentialsProvider.class));
     }
 
     private void thenTokenRequestIsCorrect()

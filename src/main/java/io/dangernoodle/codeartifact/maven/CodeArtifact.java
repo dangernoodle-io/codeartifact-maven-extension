@@ -2,6 +2,7 @@ package io.dangernoodle.codeartifact.maven;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.codeartifact.CodeartifactClient;
@@ -20,6 +21,10 @@ import java.util.regex.Pattern;
  */
 public class CodeArtifact
 {
+    public static final String AWS_PROFILE_PROPERTY_NAME = "dangernoodle.codeartifact.aws.profile";
+
+    public static final String AWS_PROFILE_ENV_VARIABLE_NAME = "DANGERNOODLE_CODEARTIFACT_AWS_PROFILE";
+
     private static final String KEY = "codeartifact.maven.token.duration";
 
     private static final Pattern DOMAIN_AND_DOMAIN_OWNER_PATTERN = Pattern.compile("(.*)-(.*)");
@@ -51,14 +56,26 @@ public class CodeArtifact
 
     private AwsCredentialsProvider createProvider(Credentials credentials)
     {
+        if (credentials.username != null && credentials.password != null) 
+        {
+            return createStaticCredentials(credentials);
+        }
+        if (credentials.awsProfile != null)
+        {
+            return createProfileCredentials(credentials);
+        }
         // null == use of the DefaultProviderChain
-        return (credentials.username != null && credentials.password != null) ?
-                createStaticCredentials(credentials) : null;
+        return null;
     }
 
     private AwsCredentialsProvider createStaticCredentials(Credentials credentials)
     {
         return StaticCredentialsProvider.create(AwsBasicCredentials.create(credentials.username, credentials.password));
+    }
+
+    private AwsCredentialsProvider createProfileCredentials(Credentials credentials)
+    {
+        return ProfileCredentialsProvider.create(credentials.awsProfile);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -112,10 +129,13 @@ public class CodeArtifact
 
         public final String username;
 
+        public final String awsProfile;
+
         private Credentials(String password, Instant timestamp)
         {
             this.username = "codecommit";
             this.password = password;
+            this.awsProfile = null;
             this.expiration = timestamp;
         }
 
@@ -123,6 +143,15 @@ public class CodeArtifact
         {
             this.username = username;
             this.password = password;
+            this.awsProfile = null;
+            this.expiration = null;
+        }
+
+        public Credentials(String awsProfile)
+        {
+            this.username = null;
+            this.password = null;
+            this.awsProfile = awsProfile;
             this.expiration = null;
         }
     }
