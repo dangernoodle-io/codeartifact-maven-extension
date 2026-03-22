@@ -23,6 +23,7 @@
     <javax-inject.version>1</javax-inject.version>
     <junit.version>5.11.0</junit.version>
     <mockito.version>3.2.4</mockito.version>
+    <system-stubs.version>2.1.8</system-stubs.version>
     <slf4j.version>1.7.36</slf4j.version>
 
     <!-- plugins -->
@@ -103,6 +104,12 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>uk.org.webcompere</groupId>
+      <artifactId>system-stubs-jupiter</artifactId>
+      <version>${system-stubs.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
