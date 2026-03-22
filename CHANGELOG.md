@@ -1,11 +1,13 @@
 # Changelog
 
+- **0.5.0** (2026.03.22)
+  - Added support for codeartifact domains that contain periods (#29)
 - **0.4.0** (2025.06.17)
   - Allow access using assumed roles
 - **0.3.1** (2025.05.13)
   - Fixed dependencies
 - **0.3.0** (2025.05.13)
-  - Use IAM identity center SSO authentication to obtain codeartifact auth tokens
+  - Use IAM identity center SSO authentication to get codeartifact auth tokens
 - **0.2.4** (2024.09.17)
   - Added support for codeartifact domains that contain hyphens
   - Added 'maven-resolver-transport-http' implementation for http 
