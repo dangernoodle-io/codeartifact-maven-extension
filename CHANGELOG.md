@@ -1,5 +1,7 @@
 # Changelog
 
+- **0.6.0** (2026.05.04)
+  - Allow setting AWS profile from project property (#32)
 - **0.5.0** (2026.03.22)
   - Added support for codeartifact domains that contain periods (#29)
 - **0.4.0** (2025.06.17)
