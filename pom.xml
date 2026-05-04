@@ -22,6 +22,7 @@
     <httpclient.version>4.5.13</httpclient.version>
     <javax-inject.version>1</javax-inject.version>
     <junit.version>5.11.0</junit.version>
+    <maven-core.version>3.9.6</maven-core.version>
     <mockito.version>3.2.4</mockito.version>
     <system-stubs.version>2.1.8</system-stubs.version>
     <slf4j.version>1.7.36</slf4j.version>
@@ -128,6 +129,12 @@
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
       <version>${javax-inject.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>${maven-core.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

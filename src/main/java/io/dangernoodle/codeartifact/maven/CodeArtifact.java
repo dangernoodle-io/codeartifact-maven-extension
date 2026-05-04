@@ -25,6 +25,8 @@ public class CodeArtifact
 
     public static final String AWS_PROFILE_ENV_VARIABLE_NAME = "DANGERNOODLE_CODEARTIFACT_AWS_PROFILE";
 
+    public static final String AWS_PROFILE_PROJECT_PROPERTY_NAME = "codeartifact.aws.profile";
+
     private static final String KEY = "codeartifact.maven.token.duration";
 
     private static final Pattern DOMAIN_AND_DOMAIN_OWNER_PATTERN = Pattern.compile("(.*)-(.*)");

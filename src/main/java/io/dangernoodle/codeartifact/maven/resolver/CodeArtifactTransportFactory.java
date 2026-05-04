@@ -1,6 +1,8 @@
 package io.dangernoodle.codeartifact.maven.resolver;
 
 import io.dangernoodle.codeartifact.maven.CodeArtifact;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.AuthenticationContext;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -10,7 +12,10 @@ import org.eclipse.aether.transfer.NoTransporterException;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 
+import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
+import java.util.Properties;
 
 
 /**
@@ -26,10 +31,14 @@ public class CodeArtifactTransportFactory implements TransporterFactory
 
     private final TransporterFactory delegate;
 
-    public CodeArtifactTransportFactory()
+    private final Provider<MavenSession> sessionProvider;
+
+    @Inject
+    public CodeArtifactTransportFactory(Provider<MavenSession> sessionProvider)
     {
         this.codeArtifact = createCodeArtifact();
         this.delegate = createTransporterFactory();
+        this.sessionProvider = sessionProvider;
     }
 
     @Override
@@ -66,13 +75,42 @@ public class CodeArtifactTransportFactory implements TransporterFactory
         return new HttpTransporterFactory();
     }
 
-    private String getAwsProfile() 
+    private String getAwsProfile()
     {
         final String profile = System.getProperty(CodeArtifact.AWS_PROFILE_PROPERTY_NAME);
         if (profile != null) {
             return profile;
         }
-        return System.getenv(CodeArtifact.AWS_PROFILE_ENV_VARIABLE_NAME);
+        final String profileFromEnv = System.getenv(CodeArtifact.AWS_PROFILE_ENV_VARIABLE_NAME);
+        if (profileFromEnv != null) {
+            return profileFromEnv;
+        }
+        return getAwsProfileFromProject();
+    }
+
+    private String getAwsProfileFromProject()
+    {
+        if (sessionProvider == null) {
+            return null;
+        }
+        MavenSession session;
+        try {
+            session = sessionProvider.get();
+        } catch (RuntimeException ex) {
+            return null;
+        }
+        if (session == null) {
+            return null;
+        }
+        MavenProject project = session.getCurrentProject();
+        if (project == null) {
+            return null;
+        }
+        Properties properties = project.getProperties();
+        if (properties == null) {
+            return null;
+        }
+        return properties.getProperty(CodeArtifact.AWS_PROFILE_PROJECT_PROPERTY_NAME);
     }
 
     private boolean areKeysSet(AuthenticationContext context)
