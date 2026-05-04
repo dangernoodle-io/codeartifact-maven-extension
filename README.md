@@ -65,3 +65,45 @@ Separately, static credentials can be provided in an a `server` entry in `maven-
 ```
 
 Make sure you are using appropriate security precautions if you are using static credentials.
+
+### AWS profile
+
+If you don't want to rely on the `DefaultCredentialsProvider` and prefer to authenticate using a named profile from
+your AWS shared credentials/config file, you can tell the extension which profile to use. The
+[ProfileCredentialsProvider](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/ProfileCredentialsProvider.html)
+is then used instead of the default chain.
+
+The profile can be set in any of the following ways. They are checked in the order listed and the first non-null
+value wins:
+
+1. **System property** passed on the command line: `-Ddangernoodle.codeartifact.aws.profile=<profile>`
+2. **Environment variable**: `DANGERNOODLE_CODEARTIFACT_AWS_PROFILE=<profile>`
+3. **Maven project property** `codeartifact.aws.profile`. This is read from the current Maven project's
+   effective properties, so it can be set in the project's `pom.xml`, or in an active profile in your
+   user's `settings.xml`. For example:
+
+   ```xml
+   <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                                 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+       <profiles>
+           <profile>
+               <id>local</id>
+               <properties>
+                   <codeartifact.aws.profile>AWSPowerUserAccess</codeartifact.aws.profile>
+               </properties>
+           </profile>
+       </profiles>
+       <activeProfiles>
+           <activeProfile>local</activeProfile>
+       </activeProfiles>
+   </settings>
+   ```
+
+Static credentials configured via a `<server>` entry (see above) take precedence over any profile resolution. If
+none of the profile sources is set and no static credentials are configured, the extension falls back to the
+`DefaultCredentialsProvider`.
+
+> AWS profile resolution is only available with the resolver implementation (Maven >= 3.9.0). The wagon
+> implementation (Maven < 3.9.0) only supports static credentials via a `<server>` entry.

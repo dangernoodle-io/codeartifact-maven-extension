@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,6 +18,8 @@ import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 import uk.org.webcompere.systemstubs.jupiter.SystemStub;
 import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension;
 
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -30,6 +33,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import javax.inject.Provider;
+import java.util.Properties;
 
 
 @ExtendWith({MockitoExtension.class, SystemStubsExtension.class})
@@ -57,10 +63,20 @@ public class CodeArtifactTransportFactoryTest
     @Mock
     private RepositorySystemSession mockSession;
 
+    @Mock
+    private MavenSession mockMavenSession;
+
+    @Mock
+    private MavenProject mockProject;
+
+    private Provider<MavenSession> sessionProvider;
+
     @BeforeEach
     public void beforeEach()
     {
-        factory = new CodeArtifactTransportFactory()
+        sessionProvider = () -> mockMavenSession;
+
+        factory = new CodeArtifactTransportFactory(sessionProvider)
         {
             @Override
             CodeArtifact createCodeArtifact()
@@ -153,6 +169,27 @@ public class CodeArtifactTransportFactoryTest
     }
 
     @Test
+    public void testProfileCredentialsFromProjectProperty() throws Exception
+    {
+        givenAUrlThatIsCodeArtifact();
+        givenAProfileProjectProperty();
+        whenCreateTransportFactory();
+        thenCredentialsAreGenerated();
+        thenPassedCredentialsContainProfile();
+    }
+
+    @Test
+    public void testEnvVariableTakesPrecedenceOverProjectProperty() throws Exception
+    {
+        givenAUrlThatIsCodeArtifact();
+        givenAProfileEnvVariable();
+        givenAProfileProjectProperty("other-profile");
+        whenCreateTransportFactory();
+        thenCredentialsAreGenerated();
+        thenPassedCredentialsContainProfile();
+    }
+
+    @Test
     public void testStaticCredentialsTakePresentsOverProfileCredentials() throws Exception
     {
         givenAUrlThatIsCodeArtifact();
@@ -213,6 +250,19 @@ public class CodeArtifactTransportFactoryTest
     private void givenAProfileProperty()
     {
         System.setProperty(CodeArtifact.AWS_PROFILE_PROPERTY_NAME, AWS_PROFILE);
+    }
+
+    private void givenAProfileProjectProperty()
+    {
+        givenAProfileProjectProperty(AWS_PROFILE);
+    }
+
+    private void givenAProfileProjectProperty(String value)
+    {
+        Properties properties = new Properties();
+        properties.setProperty(CodeArtifact.AWS_PROFILE_PROJECT_PROPERTY_NAME, value);
+        lenient().when(mockMavenSession.getCurrentProject()).thenReturn(mockProject);
+        lenient().when(mockProject.getProperties()).thenReturn(properties);
     }
 
     private void thenCredentialsAreGenerated()
